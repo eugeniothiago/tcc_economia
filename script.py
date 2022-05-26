@@ -8,8 +8,9 @@ from zipfile import ZipFile
 from unidecode import unidecode
 import time
 import sys
+import posixpath
 
-project_dir = Path("notebook.ipynb").resolve().parents[0]
+project_dir = Path('script.py').resolve().parents[0]
 
 print('Iniciando o script')
 time.sleep(1)
@@ -27,7 +28,7 @@ for archive in raw_data_list:
         sys.exit()
     else:
         name, extension = os.path.splitext(archive)
-        if extension =='.csv':
+        if extension =='.zip':
             with ZipFile(f'{project_dir}/raw_data/{archive}','r') as zipfile:
                 if not os.path.exists('data'):
                     os.mkdir('data')
@@ -58,7 +59,6 @@ gc.collect()
 
 #criando o dataset inicial e realizando o merge com os dados disponíveis
 file_list = [file for file in os.listdir(f'{project_dir}/melted_data/')]
-
 melted_data = pd.read_csv(f'{project_dir}/melted_data/{file_list[0]}', header=0, sep=';',encoding='latin-1')
 #melted_data.columns = melted_data.iloc[0]
 #melted_data = melted_data.drop([0], axis=0)
@@ -74,3 +74,5 @@ for file in file_list[1:]:
     melted_data = melted_data.drop(melted_data.filter(regex='_D$').columns.tolist(), axis=1)
 
 melted_data.to_csv(f'{project_dir}/dataset.csv', sep=';',decimal=',', encoding='latin-1')
+
+print('Processamento concluído. Os dados em painel estão disponíveis no arquivo dataset.csv!')
